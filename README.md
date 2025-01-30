@@ -17,29 +17,31 @@ A modern web platform built with Next.js that enables charitable donations throu
 
 Tech Charity is a platform designed to bridge the digital divide by facilitating technology education and resources for underserved communities. The platform enables seamless donations through M-Pesa integration and provides real-time tracking of impact metrics.
 
-```plantuml
-@startuml Overview
-!theme plain
-skinparam backgroundColor transparent
-skinparam defaultFontName Arial
+```mermaid
+graph TB
+    Donor((Donor))
+    Admin((Admin))
+    subgraph Tech_Charity_Platform
+        Frontend[Frontend<br/>Next.js]
+        Backend[Backend<br/>Next.js API]
+        DB[(MongoDB)]
+        MPesa[M-Pesa API]
+    end
+    
+    Donor -->|Makes donation| Frontend
+    Frontend -->|Processes request| Backend
+    Backend -->|Initiates payment| MPesa
+    MPesa -->|Payment callback| Backend
+    Backend -->|Stores transaction| DB
+    Admin -->|Views dashboard| Frontend
 
-actor "Donor" as donor
-actor "Admin" as admin
-rectangle "Tech Charity Platform" {
-    component "Frontend\n(Next.js)" as frontend
-    component "Backend\n(Next.js API)" as backend
-    database "MongoDB" as db
-    component "M-Pesa API" as mpesa
-}
-
-donor --> frontend : Makes donation
-frontend --> backend : Processes request
-backend --> mpesa : Initiates payment
-mpesa --> backend : Payment callback
-backend --> db : Stores transaction
-admin --> frontend : Views dashboard
-
-@enduml
+    classDef actor fill:#f9f,stroke:#333,stroke-width:2px
+    classDef component fill:#bbf,stroke:#333,stroke-width:2px
+    classDef database fill:#dfd,stroke:#333,stroke-width:2px
+    
+    class Donor,Admin actor
+    class Frontend,Backend,MPesa component
+    class DB database
 ```
 
 ## Features
@@ -55,66 +57,65 @@ admin --> frontend : Views dashboard
 
 ### Payment Flow
 
-```plantuml
-@startuml Payment Flow
-!theme plain
-skinparam backgroundColor transparent
-skinparam defaultFontName Arial
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant MPesa
+    participant MongoDB
 
-participant "User" as user
-participant "Frontend" as frontend
-participant "Backend API" as api
-participant "M-Pesa" as mpesa
-participant "MongoDB" as db
+    User->>Frontend: 1. Initiates donation
+    Frontend->>Backend: 2. Submits donation details
+    Backend->>MPesa: 3. Initiates STK Push
+    MPesa->>User: 4. Prompts for payment
+    User->>MPesa: 5. Confirms payment
+    MPesa->>Backend: 6. Payment callback
+    Backend->>MongoDB: 7. Updates donation status
+    Backend->>Frontend: 8. Confirms success
+    Frontend->>User: 9. Shows confirmation
 
-user -> frontend : 1. Initiates donation
-frontend -> api : 2. Submits donation details
-api -> mpesa : 3. Initiates STK Push
-mpesa -> user : 4. Prompts for payment
-user -> mpesa : 5. Confirms payment
-mpesa -> api : 6. Payment callback
-api -> db : 7. Updates donation status
-frontend <- api : 8. Confirms success
-user <- frontend : 9. Shows confirmation
-
-@enduml
+    note over Backend,MPesa: Secure API Communication
+    note over Backend,MongoDB: Real-time Updates
 ```
 
 ### Component Architecture
 
-```plantuml
-@startuml Components
-!theme plain
-skinparam backgroundColor transparent
-skinparam defaultFontName Arial
+```mermaid
+graph TB
+    subgraph Frontend
+        Nav[Navigation]
+        Form[DonationForm]
+        Dash[Dashboard]
+        Payment[PaymentProcessor]
+    end
 
-package "Frontend" {
-    [Navigation]
-    [DonationForm]
-    [Dashboard]
-    [PaymentProcessor]
-}
+    subgraph Backend
+        API[API Routes]
+        MPesaService[M-Pesa Service]
+        DBService[Database Service]
+    end
 
-package "Backend" {
-    [API Routes]
-    [M-Pesa Service]
-    [Database Service]
-}
+    subgraph Database
+        Donations[(Donations)]
+        Stats[(Statistics)]
+    end
 
-database "MongoDB" {
-    [Donations]
-    [Statistics]
-}
+    Nav --> Dash
+    Form --> Payment
+    Payment --> API
+    API --> MPesaService
+    API --> DBService
+    DBService --> Donations
+    DBService --> Stats
 
-[Navigation] --> [Dashboard]
-[DonationForm] --> [PaymentProcessor]
-[PaymentProcessor] --> [API Routes]
-[API Routes] --> [M-Pesa Service]
-[API Routes] --> [Database Service]
-[Database Service] --> [Donations]
-[Database Service] --> [Statistics]
+    classDef frontend fill:#bbf,stroke:#333,stroke-width:2px
+    classDef backend fill:#fbb,stroke:#333,stroke-width:2px
+    classDef database fill:#dfd,stroke:#333,stroke-width:2px
 
-@enduml
+    class Nav,Form,Dash,Payment frontend
+    class API,MPesaService,DBService backend
+    class Donations,Stats database
 ```
 
 ## Getting Started
@@ -127,31 +128,31 @@ database "MongoDB" {
 ### Installation
 
 1. Clone the repository:
-\`\`\`bash
+```bash
 git clone https://github.com/yourusername/tech-charity.git
 cd tech-charity
-\`\`\`
+```
 
 2. Install dependencies:
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 3. Set up environment variables:
-\`\`\`bash
+```bash
 cp .env.example .env.local
-\`\`\`
+```
 
 4. Start the development server:
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 ## Environment Setup
 
-Create a \`.env.local\` file with the following variables:
+Create a `.env.local` file with the following variables:
 
-\`\`\`env
+```env
 # Base URL
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
@@ -168,13 +169,13 @@ MPESA_ENVIRONMENT=sandbox
 # Development configuration with ngrok
 MPESA_CALLBACK_SECRET_KEY=your_secret_key
 MPESA_CALLBACK_URL=your_ngrok_url/api/mpesa/your_secret_key
-\`\`\`
+```
 
 ## API Documentation
 
 ### Donation Endpoints
 
-\`\`\`typescript
+```typescript
 // Create Donation
 POST /api/donations
 {
@@ -191,30 +192,26 @@ GET /api/donations/stats
 
 // M-Pesa Callback
 POST /api/mpesa/{secretKey}
-\`\`\`
+```
 
 ## Database Schema
 
-```plantuml
-@startuml Database Schema
-!theme plain
-skinparam backgroundColor transparent
-skinparam defaultFontName Arial
+```mermaid
+erDiagram
+    DONATION {
+        ObjectId _id PK
+        String name
+        String phone
+        Number amount
+        String checkoutRequestId
+        String status
+        Date createdAt
+        String mpesaCode
+        Date transactionDate
+    }
 
-entity "Donation" {
-  * _id: ObjectId
-  --
-  * name: String
-  * phone: String
-  * amount: Number
-  * checkoutRequestId: String
-  * status: String
-  * createdAt: Date
-  mpesaCode: String
-  transactionDate: Date
-}
-
-@enduml
+    note "Status can be: pending, completed, failed" as N1
+    DONATION .. N1
 ```
 
 ## M-Pesa Integration
@@ -230,44 +227,36 @@ The platform integrates with M-Pesa's STK Push API for payment processing. Here'
 
 ### Callback Handling
 
-```plantuml
-@startuml Callback Handling
-!theme plain
-skinparam backgroundColor transparent
-skinparam defaultFontName Arial
+```mermaid
+flowchart TD
+    A[Receive M-Pesa callback] --> B{Valid security key?}
+    B -->|Yes| C{Valid IP?}
+    B -->|No| D[Log invalid key]
+    C -->|Yes| E{Payment successful?}
+    C -->|No| F[Log invalid IP]
+    E -->|Yes| G[Extract transaction details]
+    E -->|No| H[Mark donation as failed]
+    G --> I[Update donation status]
+    I --> J[Return success]
+    H --> K[Return acknowledgment]
+    F --> K
+    D --> K
 
-start
-:Receive M-Pesa callback;
-if (Valid security key?) then (yes)
-  if (Valid IP?) then (yes)
-    :Parse callback data;
-    if (Payment successful?) then (yes)
-      :Extract transaction details;
-      :Update donation status;
-      :Return success;
-    else (no)
-      :Mark donation as failed;
-      :Return acknowledgment;
-    endif
-  else (no)
-    :Log invalid IP;
-    :Return acknowledgment;
-  endif
-else (no)
-  :Log invalid key;
-  :Return acknowledgment;
-endif
-stop
+    classDef process fill:#bbf,stroke:#333,stroke-width:2px
+    classDef decision fill:#fbb,stroke:#333,stroke-width:2px
+    classDef terminal fill:#dfd,stroke:#333,stroke-width:2px
 
-@enduml
+    class A,G,I,D,F,H process
+    class B,C,E decision
+    class J,K terminal
 ```
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (\`git checkout -b feature/AmazingFeature\`)
-3. Commit your changes (\`git commit -m 'Add some AmazingFeature'\`)
-4. Push to the branch (\`git push origin feature/AmazingFeature\`)
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
 ## License
