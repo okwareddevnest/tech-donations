@@ -41,12 +41,10 @@ graph TB
     classDef actor fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
     classDef component fill:#bbdefb,stroke:#1976d2,stroke-width:2px,color:#0d47a1
     classDef database fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#1b5e20
-    classDef subgraph fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#212121
     
     class Donor,Admin actor
     class Frontend,Backend,MPesa component
     class DB database
-    class Tech_Charity_Platform subgraph
 ```
 
 ## Features
@@ -123,12 +121,10 @@ graph TB
     classDef frontend fill:#bbdefb,stroke:#1976d2,stroke-width:2px,color:#0d47a1
     classDef backend fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c
     classDef database fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#1b5e20
-    classDef subgraph fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#212121
 
     class Nav,Form,Dash,Payment frontend
     class API,MPesaService,DBService backend
     class Donations,Stats database
-    class Frontend,Backend,Database subgraph
 ```
 
 ## Getting Started
@@ -225,10 +221,12 @@ erDiagram
         String mpesaCode "M-Pesa Code"
         Date transactionDate "Payment Date"
     }
-
-    note "Status: pending (🟡), completed (🟢), failed (🔴)" as N1
-    DONATION .. N1
 ```
+#### Status Definitions:
+- 🟡 **pending**: Awaiting confirmation.
+- 🟢 **completed**: Donation was successful.
+- 🔴 **failed**: Payment was declined.
+
 
 ## M-Pesa Integration
 
