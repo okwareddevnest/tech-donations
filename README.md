@@ -17,11 +17,21 @@ A modern web platform built with Next.js that enables charitable donations throu
 
 Tech Charity is a platform designed to bridge the digital divide by facilitating technology education and resources for underserved communities. The platform enables seamless donations through M-Pesa integration and provides real-time tracking of impact metrics.
 
-```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#4f6d7a',
+    'primaryTextColor': '#fff',
+    'primaryBorderColor': '#4a6f80',
+    'lineColor': '#4a6f80',
+    'secondaryColor': '#6c8490',
+    'tertiaryColor': '#f1f8ff'
+  }
+}}%%
 graph TB
     Donor((Donor))
     Admin((Admin))
-    subgraph Tech_Charity_Platform
+    subgraph Tech_Charity_Platform[" Tech Charity Platform "]
         Frontend[Frontend<br/>Next.js]
         Backend[Backend<br/>Next.js API]
         DB[(MongoDB)]
@@ -35,14 +45,15 @@ graph TB
     Backend -->|Stores transaction| DB
     Admin -->|Views dashboard| Frontend
 
-    classDef actor fill:#f9f,stroke:#333,stroke-width:2px
-    classDef component fill:#bbf,stroke:#333,stroke-width:2px
-    classDef database fill:#dfd,stroke:#333,stroke-width:2px
+    classDef actor fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef component fill:#bbdefb,stroke:#1976d2,stroke-width:2px,color:#0d47a1
+    classDef database fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#1b5e20
+    classDef subgraph fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#212121
     
     class Donor,Admin actor
     class Frontend,Backend,MPesa component
     class DB database
-```
+    class Tech_Charity_Platform subgraph
 
 ## Features
 
@@ -57,13 +68,25 @@ graph TB
 
 ### Payment Flow
 
-```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#4f6d7a',
+    'primaryTextColor': '#fff',
+    'primaryBorderColor': '#4a6f80',
+    'lineColor': '#4a6f80',
+    'secondaryColor': '#6c8490',
+    'tertiaryColor': '#f1f8ff',
+    'noteTextColor': '#333',
+    'noteBkgColor': '#fff3e0'
+  }
+}}%%
 sequenceDiagram
-    participant User
-    participant Frontend
-    participant Backend
-    participant MPesa
-    participant MongoDB
+    participant User as 👤 User
+    participant Frontend as 🖥️ Frontend
+    participant Backend as ⚙️ Backend
+    participant MPesa as 💳 M-Pesa
+    participant MongoDB as 🗄️ MongoDB
 
     User->>Frontend: 1. Initiates donation
     Frontend->>Backend: 2. Submits donation details
@@ -77,26 +100,35 @@ sequenceDiagram
 
     note over Backend,MPesa: Secure API Communication
     note over Backend,MongoDB: Real-time Updates
-```
 
 ### Component Architecture
 
-```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#4f6d7a',
+    'primaryTextColor': '#fff',
+    'primaryBorderColor': '#4a6f80',
+    'lineColor': '#4a6f80',
+    'secondaryColor': '#6c8490',
+    'tertiaryColor': '#f1f8ff'
+  }
+}}%%
 graph TB
-    subgraph Frontend
+    subgraph Frontend["Frontend Layer"]
         Nav[Navigation]
         Form[DonationForm]
         Dash[Dashboard]
         Payment[PaymentProcessor]
     end
 
-    subgraph Backend
+    subgraph Backend["Backend Layer"]
         API[API Routes]
         MPesaService[M-Pesa Service]
         DBService[Database Service]
     end
 
-    subgraph Database
+    subgraph Database["Data Layer"]
         Donations[(Donations)]
         Stats[(Statistics)]
     end
@@ -109,14 +141,15 @@ graph TB
     DBService --> Donations
     DBService --> Stats
 
-    classDef frontend fill:#bbf,stroke:#333,stroke-width:2px
-    classDef backend fill:#fbb,stroke:#333,stroke-width:2px
-    classDef database fill:#dfd,stroke:#333,stroke-width:2px
+    classDef frontend fill:#bbdefb,stroke:#1976d2,stroke-width:2px,color:#0d47a1
+    classDef backend fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c
+    classDef database fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#1b5e20
+    classDef subgraph fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#212121
 
     class Nav,Form,Dash,Payment frontend
     class API,MPesaService,DBService backend
     class Donations,Stats database
-```
+    class Frontend,Backend,Database subgraph
 
 ## Getting Started
 
@@ -129,8 +162,8 @@ graph TB
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/tech-charity.git
-cd tech-charity
+git clone https://github.com/okwareddevnest/tech-donations.git
+cd tech-donations
 ```
 
 2. Install dependencies:
@@ -196,23 +229,32 @@ POST /api/mpesa/{secretKey}
 
 ## Database Schema
 
-```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#4f6d7a',
+    'primaryTextColor': '#fff',
+    'primaryBorderColor': '#4a6f80',
+    'lineColor': '#4a6f80',
+    'secondaryColor': '#6c8490',
+    'tertiaryColor': '#f1f8ff'
+  }
+}}%%
 erDiagram
     DONATION {
-        ObjectId _id PK
-        String name
-        String phone
-        Number amount
-        String checkoutRequestId
-        String status
-        Date createdAt
-        String mpesaCode
-        Date transactionDate
+        ObjectId _id PK "Primary Key"
+        String name "Donor Name"
+        String phone "Phone Number"
+        Number amount "Donation Amount"
+        String checkoutRequestId "M-Pesa Request ID"
+        String status "Transaction Status"
+        Date createdAt "Creation Date"
+        String mpesaCode "M-Pesa Code"
+        Date transactionDate "Payment Date"
     }
 
-    note "Status can be: pending, completed, failed" as N1
+    note "Status: pending (🟡), completed (🟢), failed (🔴)" as N1
     DONATION .. N1
-```
 
 ## M-Pesa Integration
 
@@ -227,44 +269,39 @@ The platform integrates with M-Pesa's STK Push API for payment processing. Here'
 
 ### Callback Handling
 
-```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#4f6d7a',
+    'primaryTextColor': '#fff',
+    'primaryBorderColor': '#4a6f80',
+    'lineColor': '#4a6f80',
+    'secondaryColor': '#6c8490',
+    'tertiaryColor': '#f1f8ff'
+  }
+}}%%
 flowchart TD
     A[Receive M-Pesa callback] --> B{Valid security key?}
-    B -->|Yes| C{Valid IP?}
-    B -->|No| D[Log invalid key]
-    C -->|Yes| E{Payment successful?}
-    C -->|No| F[Log invalid IP]
-    E -->|Yes| G[Extract transaction details]
-    E -->|No| H[Mark donation as failed]
+    B -->|Yes ✅| C{Valid IP?}
+    B -->|No ❌| D[Log invalid key]
+    C -->|Yes ✅| E{Payment successful?}
+    C -->|No ❌| F[Log invalid IP]
+    E -->|Yes ✅| G[Extract transaction details]
+    E -->|No ❌| H[Mark donation as failed]
     G --> I[Update donation status]
     I --> J[Return success]
     H --> K[Return acknowledgment]
     F --> K
     D --> K
 
-    classDef process fill:#bbf,stroke:#333,stroke-width:2px
-    classDef decision fill:#fbb,stroke:#333,stroke-width:2px
-    classDef terminal fill:#dfd,stroke:#333,stroke-width:2px
+    classDef process fill:#bbdefb,stroke:#1976d2,stroke-width:2px,color:#0d47a1
+    classDef decision fill:#ffecb3,stroke:#ffa000,stroke-width:2px,color:#ff6f00
+    classDef terminal fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#1b5e20
+    classDef error fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c
 
-    class A,G,I,D,F,H process
+    class A,G,I process
     class B,C,E decision
     class J,K terminal
-```
+    class D,F,H error
 
-## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Next.js team for the amazing framework
-- Safaricom for M-Pesa API support
-- All contributors who help bridge the digital divide
