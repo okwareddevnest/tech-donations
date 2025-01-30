@@ -17,17 +17,10 @@ A modern web platform built with Next.js that enables charitable donations throu
 
 Tech Charity is a platform designed to bridge the digital divide by facilitating technology education and resources for underserved communities. The platform enables seamless donations through M-Pesa integration and provides real-time tracking of impact metrics.
 
-%%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'primaryColor': '#4f6d7a',
-    'primaryTextColor': '#fff',
-    'primaryBorderColor': '#4a6f80',
-    'lineColor': '#4a6f80',
-    'secondaryColor': '#6c8490',
-    'tertiaryColor': '#f1f8ff'
-  }
-}}%%
+```mermaid
+---
+title: System Overview
+---
 graph TB
     Donor((Donor))
     Admin((Admin))
@@ -54,6 +47,7 @@ graph TB
     class Frontend,Backend,MPesa component
     class DB database
     class Tech_Charity_Platform subgraph
+```
 
 ## Features
 
@@ -68,19 +62,10 @@ graph TB
 
 ### Payment Flow
 
-%%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'primaryColor': '#4f6d7a',
-    'primaryTextColor': '#fff',
-    'primaryBorderColor': '#4a6f80',
-    'lineColor': '#4a6f80',
-    'secondaryColor': '#6c8490',
-    'tertiaryColor': '#f1f8ff',
-    'noteTextColor': '#333',
-    'noteBkgColor': '#fff3e0'
-  }
-}}%%
+```mermaid
+---
+title: Payment Flow
+---
 sequenceDiagram
     participant User as 👤 User
     participant Frontend as 🖥️ Frontend
@@ -100,20 +85,14 @@ sequenceDiagram
 
     note over Backend,MPesa: Secure API Communication
     note over Backend,MongoDB: Real-time Updates
+```
 
 ### Component Architecture
 
-%%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'primaryColor': '#4f6d7a',
-    'primaryTextColor': '#fff',
-    'primaryBorderColor': '#4a6f80',
-    'lineColor': '#4a6f80',
-    'secondaryColor': '#6c8490',
-    'tertiaryColor': '#f1f8ff'
-  }
-}}%%
+```mermaid
+---
+title: Component Architecture
+---
 graph TB
     subgraph Frontend["Frontend Layer"]
         Nav[Navigation]
@@ -150,6 +129,7 @@ graph TB
     class API,MPesaService,DBService backend
     class Donations,Stats database
     class Frontend,Backend,Database subgraph
+```
 
 ## Getting Started
 
@@ -229,17 +209,10 @@ POST /api/mpesa/{secretKey}
 
 ## Database Schema
 
-%%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'primaryColor': '#4f6d7a',
-    'primaryTextColor': '#fff',
-    'primaryBorderColor': '#4a6f80',
-    'lineColor': '#4a6f80',
-    'secondaryColor': '#6c8490',
-    'tertiaryColor': '#f1f8ff'
-  }
-}}%%
+```mermaid
+---
+title: Database Schema
+---
 erDiagram
     DONATION {
         ObjectId _id PK "Primary Key"
@@ -255,6 +228,7 @@ erDiagram
 
     note "Status: pending (🟡), completed (🟢), failed (🔴)" as N1
     DONATION .. N1
+```
 
 ## M-Pesa Integration
 
@@ -269,17 +243,10 @@ The platform integrates with M-Pesa's STK Push API for payment processing. Here'
 
 ### Callback Handling
 
-%%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'primaryColor': '#4f6d7a',
-    'primaryTextColor': '#fff',
-    'primaryBorderColor': '#4a6f80',
-    'lineColor': '#4a6f80',
-    'secondaryColor': '#6c8490',
-    'tertiaryColor': '#f1f8ff'
-  }
-}}%%
+```mermaid
+---
+title: M-Pesa Callback Flow
+---
 flowchart TD
     A[Receive M-Pesa callback] --> B{Valid security key?}
     B -->|Yes ✅| C{Valid IP?}
@@ -303,5 +270,6 @@ flowchart TD
     class B,C,E decision
     class J,K terminal
     class D,F,H error
+```
 
 
