@@ -18,41 +18,56 @@ function PaymentForm() {
 
   var reqcount = 0;
 
-  const stkPushQueryWithIntervals = (CheckoutRequestID) => {
-    const timer = setInterval(async () => {
-      reqcount += 1;
+  const stkPushQueryWithIntervals = async (CheckoutRequestID) => {
+    setStkQueryLoading(true);
+    
+    // Wait for 3 seconds
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
-      if (reqcount === 15) {
-        clearInterval(timer);
-        setStkQueryLoading(false);
-        setLoading(false);
-        setErrorMessage("You took too long to pay");
-      }
-
+    try {
       const { data, error } = await stkPushQuery(CheckoutRequestID);
 
       if (error) {
-        if (error.response.data.errorCode !== "500.001.1001") {
-          setStkQueryLoading(false);
-          setLoading(false);
-          setErrorMessage(error?.response?.data?.errorMessage);
-        }
+        setStkQueryLoading(false);
+        setLoading(false);
+        setErrorMessage(error?.response?.data?.errorMessage || "Payment verification failed");
+        return;
       }
 
       if (data) {
         if (data.ResultCode === "0") {
-          clearInterval(timer);
-          setStkQueryLoading(false);
-          setLoading(false);
-          setSuccess(true);
+          // Payment successful - update the status in database
+          const updateResponse = await fetch('/api/donations/update', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              checkoutRequestId: CheckoutRequestID,
+              mpesaCode: data.ResultDesc.match(/\[(\w+)\]/)?.[1] || ''  // Extract mpesa code from ResultDesc
+            })
+          });
+
+          if (updateResponse.ok) {
+            setStkQueryLoading(false);
+            setLoading(false);
+            setSuccess(true);
+          } else {
+            setStkQueryLoading(false);
+            setLoading(false);
+            setErrorMessage("Payment completed but failed to update status");
+          }
         } else {
-          clearInterval(timer);
           setStkQueryLoading(false);
           setLoading(false);
-          setErrorMessage(data?.ResultDesc);
+          setErrorMessage(data?.ResultDesc || "Payment failed");
         }
       }
-    }, 2000);
+    } catch (error) {
+      setStkQueryLoading(false);
+      setLoading(false);
+      setErrorMessage("Failed to verify payment status");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -102,7 +117,6 @@ function PaymentForm() {
     }
 
     const checkoutRequestId = stkData.CheckoutRequestID;
-    setStkQueryLoading(true);
     stkPushQueryWithIntervals(checkoutRequestId);
   };
 

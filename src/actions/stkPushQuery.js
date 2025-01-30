@@ -50,9 +50,25 @@ export async function stkPushQuery(CheckoutRequestID) {
       }
     );
 
-    return { data: queryResponse.data };
+    // Extract relevant information from the response
+    const { ResultCode, ResultDesc } = queryResponse.data;
+    
+    return {
+      data: {
+        ResultCode: ResultCode.toString(),
+        ResultDesc
+      }
+    };
   } catch (error) {
     console.error("STK Query Error:", error.response?.data || error.message);
-    return { error };
+    return {
+      error: {
+        response: {
+          data: {
+            errorMessage: error.response?.data?.errorMessage || error.message
+          }
+        }
+      }
+    };
   }
 } 
